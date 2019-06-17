@@ -38,19 +38,6 @@ def links_from_dict(currentID):
     link_list = links[currentID]
     return link_list
 
-
-def get_preID(currentID, preID):
-    preID_dict = dict()
-    preID_dict[currentID] = preID
-    return preID_dict
-
-
-def get_step(currentID, step):
-    step_dict = dict()
-    step_dict[currentID] = step
-    return step_dict
-
-
 def bfs(originID, destinationID):
     visited = set()
     queue = collections.deque()
