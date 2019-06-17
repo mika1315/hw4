@@ -1,5 +1,6 @@
 import csv
 import collections
+import itertools
 
 # 修正を容易にするためファイル名を冒頭で定義
 NICKNAMES = "nicknames.txt"
@@ -28,15 +29,19 @@ def links_from_file():
     with open(LINKS, 'r') as f:
         reader = csv.reader(f, delimiter = '\t')
         for row in reader:
-            # 辞書にキーがない場合のエラー処理すべきだけど未実装
             links.setdefault(int(row[0]), []).append(int(row[1]))
     return links
 
 
 def links_from_dict(currentID):
     links = links_from_file()
-    link_list = links[currentID]
-    return link_list
+    if currentID in links: # links に currentID というキーがあったら link_list を返す
+        link_list = links[currentID]
+        return link_list
+    else: # なかったら空リストを返す
+        links[currentID] = []
+        return []
+    
 
 def bfs(originID, destinationID):
     visited = set()
@@ -80,14 +85,32 @@ def print_root(step, root):
         print('Fail!')
 
 
-
 if __name__ == "__main__":
-    originName = "jacob" # 出発地
-    destinationName = "erik" # 目的地
-    originID = nameToID_from_dict(originName) # 出発地の名前からIDを返す
-    destinationID = nameToID_from_dict(destinationName) # 目的地の名前からIDを返す
-    step, root = bfs(originID, destinationID) # 出発地から目的地まで探索する
+    # originName = "jacob" # 出発地
+    # destinationName = "erik" # 目的地
+    # originID = nameToID_from_dict(originName) # 出発地の名前からIDを返す
+    # destinationID = nameToID_from_dict(destinationName) # 目的地の名前からIDを返す
+    # step, root = bfs(originID, destinationID) # 出発地から目的地まで探索する
 
-    print(originName, ' >> ', destinationName)
-    print(step, 'step')
-    print_root(step, root) # ルートを表示
+    # print(originName, " >> ", destinationName)
+    # print(step, "step")
+    # print_root(step, root) # ルートを表示
+
+    persons, nameToID = nicknames_from_file()
+    combi = list(itertools.combinations(range(49), 2)) # 全ての組み合わせを探す
+    count = 0
+
+    # print(combi) 
+    for (originID, destinationID) in combi:
+        step_to, root_to = bfs(originID, destinationID) # 出発地から目的地まで探索する
+        step_from, root_from = bfs(destinationID, originID) # 出発地から目的地まで探索する
+        # 片思いを探す
+        if step_to == -1 and step_from != -1:
+            print(persons[destinationID], " is in one-sided love with ", persons[originID])
+            count += 1
+        elif step_to != -1 and step_from == -1:
+            print(persons[originID], " is in one-sided love with ", persons[destinationID])
+            count += 1
+
+    print("one-sided couple: ", count)
+
