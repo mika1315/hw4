@@ -18,9 +18,8 @@ def nicknames_from_file():
     return persons, nameToID
 
 
-def nameToID_from_dict(rootName):
-    persons, nameToID = nicknames_from_file()
-    rootID = nameToID[rootName]
+def nameToID_from_dict(name, persons, nameToID):
+    rootID = nameToID[name]
     return rootID
 
 
@@ -33,8 +32,8 @@ def links_from_file():
     return links
 
 
-def links_from_dict(currentID):
-    links = links_from_file()
+def links_from_dict(currentID, links):
+    # linksは辞書
     if currentID in links: # links に currentID というキーがあったら link_list を返す
         link_list = links[currentID]
         return link_list
@@ -55,6 +54,8 @@ def bfs(originID, destinationID):
     step_dict[originID] = step # 出発地は 0 step
     preID_dict[originID] = [originID] # 出発地を格納
 
+    links = links_from_file()
+
     # キューが空になるまで
     while queue:
 
@@ -62,7 +63,7 @@ def bfs(originID, destinationID):
         visited.add(vertexID) # 「探索済みリスト」に取り出した地点を格納（ここが現在地点）
         step = step_dict[vertexID]
 
-        for neighbor in links_from_dict(vertexID): # 現在地から次に行けるポイントを調べる
+        for neighbor in links_from_dict(vertexID, links): # 現在地から次に行けるポイントを調べる
             if neighbor == destinationID:
                 preID_dict[neighbor] = preID_dict[vertexID]  + [neighbor]
                 step_dict[neighbor] = step + 1
@@ -75,11 +76,11 @@ def bfs(originID, destinationID):
             
     return -1, []
                 
-def print_root(step, root):
+def print_route(step, route):
     persons, nameToID = nicknames_from_file()
 
     if step != -1: # 目的地まで到着できたらルートを表示
-        for person in root:
+        for person in route:
             print('ID: ', person, ', Name: ', persons[person], '->')
     else:
         print('Fail!')
@@ -88,13 +89,14 @@ def print_root(step, root):
 if __name__ == "__main__":
     # originName = "jacob" # 出発地
     # destinationName = "erik" # 目的地
-    # originID = nameToID_from_dict(originName) # 出発地の名前からIDを返す
-    # destinationID = nameToID_from_dict(destinationName) # 目的地の名前からIDを返す
-    # step, root = bfs(originID, destinationID) # 出発地から目的地まで探索する
+    # persons, nameToID = nicknames_from_file() # nicknames.txt から辞書を生成
+    # originID = nameToID_from_dict(originName, persons, nameToID) # 出発地の名前からIDを返す
+    # destinationID = nameToID_from_dict(destinationName, persons, nameToID) # 目的地の名前からIDを返す
+    # step, route = bfs(originID, destinationID) # 出発地から目的地まで探索する
 
     # print(originName, " >> ", destinationName)
     # print(step, "step")
-    # print_root(step, root) # ルートを表示
+    # print_route(step, route) # ルートを表示
 
     persons, nameToID = nicknames_from_file()
     combi = list(itertools.combinations(range(49), 2)) # 全ての組み合わせを探す
