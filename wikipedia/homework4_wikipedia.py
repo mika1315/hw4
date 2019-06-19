@@ -1,6 +1,7 @@
 import csv
 import collections
 
+
 # 修正を容易にするためファイル名を冒頭で定義
 NICKNAMES = "pages.txt"
 LINKS = "links.txt"
@@ -47,11 +48,9 @@ def bfs(originID, destinationID):
 
     step_dict = dict() # ステップ数を格納
     preID_dict = dict() # ルートを格納
-    step = 0
 
     queue.append(originID)  # 現在地を探索候補キューに格納
     visited.add(originID) # 現在地を探索済リストに格納
-    step_dict[originID] = step # 出発地は 0 step
     preID_dict[originID] = [originID] # 出発地を格納
 
     links = links_from_file()
@@ -61,24 +60,21 @@ def bfs(originID, destinationID):
 
         vertexID = queue.popleft() # キューから次の探索地点を一つ取り出す 
         # visited.add(vertexID) # 「探索済みリスト」に取り出した地点を格納（ここが現在地点）
-        step = step_dict[vertexID]
 
         for neighbor in links_from_dict(vertexID, links): # 現在地から次に行けるポイントを調べる
             if neighbor == destinationID:
                 preID_dict[neighbor] = preID_dict[vertexID]  + [neighbor]
-                step_dict[neighbor] = step + 1
-                return step_dict[neighbor], preID_dict[neighbor]
+                return len(preID_dict[neighbor]) - 1, preID_dict[neighbor]
 
             elif neighbor not in visited:
                 preID_dict[neighbor] = preID_dict[vertexID] + [neighbor]
-                step_dict[neighbor] = step + 1
                 visited.add(neighbor)
                 queue.append(neighbor)
             
     return -1, []
                 
 def print_route(step, route):
-    persons, nameToID = nicknames_from_file()
+    persons, nameToID = znicknames_from_file()
 
     if step != -1: # 目的地まで到着できたらルートを表示
         for person in route:
@@ -88,8 +84,8 @@ def print_route(step, route):
 
 
 if __name__ == "__main__":
-    originName = "Google" # 出発地
-    destinationName = "渋谷" # 目的地
+    originName = "お茶の水女子大学" # 出発地
+    destinationName = "OCaml" # 目的地
     persons, nameToID = nicknames_from_file() # nicknames.txt から辞書を生成
     originID = nameToID_from_dict(originName, persons, nameToID) # 出発地の名前からIDを返す
     destinationID = nameToID_from_dict(destinationName, persons, nameToID) # 目的地の名前からIDを返す
