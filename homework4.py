@@ -86,33 +86,38 @@ def print_route(step, route):
         print('Fail!')
 
 
-if __name__ == "__main__":
-    # originName = "jacob" # 出発地
-    # destinationName = "erik" # 目的地
-    # persons, nameToID = nicknames_from_file() # nicknames.txt から辞書を生成
-    # originID = nameToID_from_dict(originName, persons, nameToID) # 出発地の名前からIDを返す
-    # destinationID = nameToID_from_dict(destinationName, persons, nameToID) # 目的地の名前からIDを返す
-    # step, route = bfs(originID, destinationID) # 出発地から目的地まで探索する
+def print_shortest_route(originName, destinationName):
+    originName = "jacob" # 出発地
+    destinationName = "erik" # 目的地
+    persons, nameToID = nicknames_from_file() # nicknames.txt から辞書を生成
+    originID = nameToID_from_dict(originName, persons, nameToID) # 出発地の名前からIDを返す
+    destinationID = nameToID_from_dict(destinationName, persons, nameToID) # 目的地の名前からIDを返す
+    step, route = bfs(originID, destinationID) # 出発地から目的地まで探索する
 
-    # print(originName, " >> ", destinationName)
-    # print(step, "step")
-    # print_route(step, route) # ルートを表示
+    print(originName, " >> ", destinationName)
+    print(step, "step")
+    print_route(step, route) # ルートを表示
 
+
+def print_count_of_one_sided_couples():
     persons, nameToID = nicknames_from_file()
-    combi = list(itertools.combinations(range(49), 2)) # 全ての組み合わせを探す
+    combi = list(itertools.combinations(range(len(nameToID)), 2)) # 全ての組み合わせを探す
     count = 0
-
-    # print(combi) 
-    for (originID, destinationID) in combi:
-        step_to, root_to = bfs(originID, destinationID) # 出発地から目的地まで探索する
-        step_from, root_from = bfs(destinationID, originID) # 出発地から目的地まで探索する
-        # 片思いを探す
-        if step_to == -1 and step_from != -1:
-            print(persons[destinationID], " is in one-sided love with ", persons[originID])
-            count += 1
-        elif step_to != -1 and step_from == -1:
-            print(persons[originID], " is in one-sided love with ", persons[destinationID])
-            count += 1
+ 
+    for from_id in persons:
+        for to_id in persons:
+            if from_id == to_id:
+                continue
+            step1, route1 = bfs(from_id, to_id)
+            step2, route2 = bfs(to_id, from_id)
+            # 片思いを探す
+            if step1 == -1 and step2 != -1:
+                count += 1
 
     print("one-sided couple: ", count)
+
+
+if __name__ == "__main__":
+    print_shortest_route("jacob", "erik")
+    # print_count_of_one_sided_couples()
 
