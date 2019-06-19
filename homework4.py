@@ -48,10 +48,10 @@ def bfs(originID, destinationID):
 
     step_dict = dict() # ステップ数を格納
     preID_dict = dict() # ルートを格納
-    step = 0
+    # step = 0
 
     queue.append(originID)  # 現在地を探索候補キューに格納
-    step_dict[originID] = step # 出発地は 0 step
+    # step_dict[originID] = step # 出発地は 0 step
     preID_dict[originID] = [originID] # 出発地を格納
 
     links = links_from_file()
@@ -60,18 +60,18 @@ def bfs(originID, destinationID):
     while queue:
 
         vertexID = queue.popleft() # キューから次の探索地点を一つ取り出す 
-        visited.add(vertexID) # 「探索済みリスト」に取り出した地点を格納（ここが現在地点）
-        step = step_dict[vertexID]
+        # step = step_dict[vertexID]
 
         for neighbor in links_from_dict(vertexID, links): # 現在地から次に行けるポイントを調べる
             if neighbor == destinationID:
                 preID_dict[neighbor] = preID_dict[vertexID]  + [neighbor]
-                step_dict[neighbor] = step + 1
-                return step_dict[neighbor], preID_dict[neighbor]
+                # step_dict[neighbor] = step + 1
+                return len(preID_dict[neighbor]) - 1, preID_dict[neighbor]
 
             elif neighbor not in visited:
                 preID_dict[neighbor] = preID_dict[vertexID] + [neighbor]
-                step_dict[neighbor] = step + 1
+                # step_dict[neighbor] = step + 1
+                visited.add(neighbor) # 「探索済みリスト」に取り出した地点を格納
                 queue.append(neighbor)
             
     return -1, []
